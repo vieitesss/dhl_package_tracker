@@ -20,10 +20,11 @@ URL = f"https://www.dhl.com/es-es/home/tracking/tracking-express.html?submit=1&t
 UPDATE_CLASS = "c-tracking-result--status-copy-date"
 TITLE_CLASS = "c-tracking-result--status-copy-message"
 RESULT_FILE = "/tmp/deliver_result.txt"
+LOG_FILE = "/tmp/deliver.log"
 
 logging.basicConfig(
     format="%(asctime)s %(message)s",
-    filename=f'{os.environ["HOME"]}/deliver.log',
+    filename=LOG_FILE,
     encoding="utf-8",
     level=logging.WARNING,
 )
