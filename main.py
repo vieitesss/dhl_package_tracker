@@ -3,6 +3,7 @@
 import requests
 import time
 import sys
+import os
 import subprocess
 import logging
 from io import TextIOWrapper
@@ -69,6 +70,9 @@ def get_last_update() -> dict:
 
 
 def is_new_update(data: str) -> bool:
+    if not os.path.exists(RESULT_FILE):
+        return True
+
     with open(RESULT_FILE, "r") as file:
         line = file.readline()
         logging.warning(line)
