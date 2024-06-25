@@ -23,7 +23,7 @@ RESULT_FILE = "/tmp/deliver_result.txt"
 
 logging.basicConfig(
     format="%(asctime)s %(message)s",
-    filename=f"{os.environ["HOME"]}/deliver.log",
+    filename=f'{os.environ["HOME"]}/deliver.log',
     encoding="utf-8",
     level=logging.WARNING,
 )
