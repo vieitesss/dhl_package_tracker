@@ -6,7 +6,10 @@ import sys
 import os
 import subprocess
 import logging
+import json
 from io import TextIOWrapper
+
+import config
 
 from bs4 import BeautifulSoup
 from selenium import webdriver
@@ -91,6 +94,25 @@ def send_notification(data: dict) -> None:
     subprocess.call(["dunstify", data["title"], data["data"], "-u", "critical"])
 
 
+def send_phone_notification(data: dict) -> None:
+    msg = {"type": "note", "title": data["title"], "body": data["data"]}
+
+    resp = requests.post(
+        "https://api.pushbullet.com/v2/pushes",
+        data=json.dumps(msg),
+        headers={
+            "Authorization": "Bearer " + config.TOKEN,
+            "Content-Type": "application/json",
+        },
+    )
+
+    if resp.status_code != 200:
+        logging.warning("Exception while sending phone notification")
+        raise Exception("Error", resp.status_code)
+    else:
+        logging.warning("Message sent")
+
+
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         eprint(f"Usage: {sys.argv[0]} <id>")
@@ -104,6 +126,7 @@ if __name__ == "__main__":
     if is_new_update(data["data"]):
         write_in_file(data["data"])
         send_notification(data)
+        send_phone_notification(data)
 
     # quit
     browser.quit()
