@@ -10,6 +10,12 @@ This Python script saves the last update message from DHL web and checks, every 
 - python3
 - dunst
 
+## Optional
+
+You can receive a phone notification if you install [PushBullet](https://www.pushbullet.com/) on your PC and phone, and then provide your Access Token to the script.
+
+To create an Acess Token justo do Settings>Create Access Token in your PushBullet account (PC).
+
 # How to use
 
 First of all is installing the requirements.
@@ -27,7 +33,7 @@ crontab -e
 Include the following line at the end of the file.
 
 ```bash
-*/1 * * * * XDG_RUNTIME_DIR=/run/user/$(id -u) /path/to/python3 /path/to/main.py <id> 
+*/1 * * * * XDG_RUNTIME_DIR=/run/user/$(id -u) /path/to/python3 /path/to/main.py <id> <token>
 # For example
 # */1 * * * * XDG_RUNTIME_DIR=/run/user/$(id -u) /usr/local/bin/python3 /home/user/main.py 123123123
 ```
