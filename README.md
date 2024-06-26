@@ -10,6 +10,14 @@ This Python script saves the last update message from DHL web and checks, every 
 - python3
 - dunst
 
+## Optional
+
+You can receive a phone notification if you install [PushBullet](https://www.pushbullet.com/) and provide your access token.
+
+To create an access token just do Settings>Create Access Token in your PushBullet account.
+
+**TODO**: Token as second argument to receive phone notification
+
 # How to use
 
 First of all is installing the requirements.

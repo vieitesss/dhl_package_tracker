@@ -9,8 +9,6 @@ import logging
 import json
 from io import TextIOWrapper
 
-import config
-
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
@@ -101,7 +99,7 @@ def send_phone_notification(data: dict) -> None:
         "https://api.pushbullet.com/v2/pushes",
         data=json.dumps(msg),
         headers={
-            "Authorization": "Bearer " + config.TOKEN,
+            "Authorization": "Bearer " + sys.argv[2],
             "Content-Type": "application/json",
         },
     )
@@ -115,8 +113,9 @@ def send_phone_notification(data: dict) -> None:
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        eprint(f"Usage: {sys.argv[0]} <id>")
+        eprint(f"Usage: {sys.argv[0]} <id> <token>")
         eprint(f"\t<id>: your dhl package id")
+        eprint(f"\t<token>: your PushBullet token")
         exit(0)
 
     URL = f"{URL}{sys.argv[1]}"
@@ -126,7 +125,8 @@ if __name__ == "__main__":
     if is_new_update(data["data"]):
         write_in_file(data["data"])
         send_notification(data)
-        send_phone_notification(data)
+        if len(sys.argv) == 3:
+            send_phone_notification(data)
 
     # quit
     browser.quit()
