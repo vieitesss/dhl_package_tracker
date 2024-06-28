@@ -1,13 +1,11 @@
 #!/usr/bin/env python3
 
 import requests
-import time
 import sys
 import os
 import subprocess
 import logging
 import json
-from io import TextIOWrapper
 
 from bs4 import BeautifulSoup
 from selenium import webdriver
@@ -43,8 +41,12 @@ chrome_options.add_argument(f"user-agent={customUserAgent}")
 browser = webdriver.Chrome(options=chrome_options)
 
 
-def eprint(*args, **kwargs):
+def eprint(*args, **kwargs) -> None:
     print(*args, file=sys.stderr, **kwargs)
+
+
+def not_found(css_class: str) -> None:
+    logging.warning(f"Could not find -> {css_class}")
 
 
 def get_last_update() -> dict:
@@ -56,18 +58,28 @@ def get_last_update() -> dict:
     try:
         wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, selector)))
     except:
-        logging.warning(f"Could not find CSS_SELECTOR -> {selector}")
+        not_found(selector)
         exit(0)
 
     # parse response
     html = browser.page_source
     soup = BeautifulSoup(html, "html.parser")
-    element = f'{str(soup.find("div", class_=UPDATE_CLASS).text).strip()}\n'
-    title = (
-        f'{str(soup.find("h2", class_=TITLE_CLASS).text).partition(",")[0].strip()}\n'
-    )
 
-    return {"data": element, "title": title}
+    data_find = soup.find("div", class_=UPDATE_CLASS)
+    if data_find is None:
+        not_found(UPDATE_CLASS)
+        exit(0)
+
+    data = f"{str(data_find.text).strip()}\n"
+
+    title_find = soup.find("h2", class_=TITLE_CLASS)
+    if title_find is None:
+        not_found(TITLE_CLASS)
+        exit(0)
+
+    title = f'{str(title_find.text).partition(",")[0].strip()}\n'
+
+    return {"data": data, "title": title}
 
 
 def is_new_update(data: str) -> bool:
@@ -77,10 +89,7 @@ def is_new_update(data: str) -> bool:
     with open(RESULT_FILE, "r") as file:
         line = file.readline()
         logging.warning(line)
-        if line == data:
-            return False
-
-    return True
+        return line != data
 
 
 def write_in_file(data: str) -> None:
